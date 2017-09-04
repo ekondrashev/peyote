@@ -24,16 +24,15 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
     }
 
     @Override
-    public void set(String data) {
-        content.clear();
-        content.putString(data);
-        clipboard.setContent(content);
-    }
-
-    @Override
-    public Optional<String> get() {
-        if (clipboard.hasString()) {
-            return Optional.of(clipboard.getString());
+    public Optional<String> value(String... data) {
+        if (data.length == 1) {
+            content.clear();
+            content.putString(data[0]);
+            clipboard.setContent(content);
+        } else {
+            if (clipboard.hasString()) {
+                return Optional.of(clipboard.getString());
+            }
         }
         return Optional.empty();
     }
@@ -63,7 +62,7 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
     }
 
     private boolean updated(String[] buf) {
-        Optional<String> current = this.get();
+        Optional<String> current = this.value();
         if (current.isPresent() && !current.get().equals(buf[0])) {
             String newString = current.get();
             buf[0] = newString;

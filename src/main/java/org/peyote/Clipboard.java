@@ -4,9 +4,7 @@ import java.util.Optional;
 
 public interface Clipboard<E> {
 
-    void set(E data);
-
-    Optional<E> get();
+    Optional<E> value(E... data);
 
     void disable();
 
