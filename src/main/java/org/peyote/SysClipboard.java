@@ -35,7 +35,7 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
 
     @Override
     public Monitor monitor(Callback<String> callback) {
-        return new Monitor(this).monitor(callback);
+        return new Monitor(this, callback);
     }
 
     class Monitor implements org.peyote.Clipboard.Monitor<String> {
@@ -45,12 +45,18 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
         private final SysClipboard clipboard;
         private Timeline timeline;
 
-        Monitor(SysClipboard clipboard) {
+        Monitor(SysClipboard clipboard, Callback<String> callback) {
             this.clipboard = clipboard;
+
+            start(callback);
         }
 
         @Override
-        public Monitor monitor(Callback<String> callback) {
+        public void close() throws IOException {
+            timeline.stop();
+        }
+
+        private void start(Callback<String> callback) {
             final String[] oldString = {""};
             timeline = new Timeline(
                     new KeyFrame(
@@ -63,13 +69,6 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
                     ));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
-
-            return this;
-        }
-
-        @Override
-        public void close() throws IOException {
-            timeline.stop();
         }
 
         private boolean updated(String[] buf) {

@@ -11,8 +11,6 @@ public interface Clipboard<E> {
     Monitor<E> monitor(Callback<E> callback);
 
     interface Monitor<E> extends Closeable {
-        Monitor<E> monitor(Callback<E> callback);
-
         @Override
         void close() throws IOException;
     }
