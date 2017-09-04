@@ -1,7 +1,4 @@
-package com.copypaste.javafx;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+package org.peyote;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,12 +18,13 @@ public interface OS {
     Hotkeys hotkeys();
 
     class OSX implements OS {
-        public static final String NAME = "osx";
+        private static final String NAME = "osx";
         private final Clipboard clipboard;
 
         public OSX(Clipboard clipboard) {
             this.clipboard = clipboard;
         }
+
         @Override
         public String name() {
             return OSX.NAME;
@@ -44,12 +42,13 @@ public interface OS {
     }
 
     class Windows implements OS {
-        public static final String NAME = "windows";
+        private static final String NAME = "windows";
         private final Clipboard clipboard;
 
         public Windows(Clipboard clipboard) {
             this.clipboard = clipboard;
         }
+
         @Override
         public String name() {
             return Windows.NAME;
@@ -67,8 +66,7 @@ public interface OS {
     }
 
     class Linux implements OS {
-        public static final String NAME = "linux";
-
+        private static final String NAME = "linux";
         private final Clipboard clipboard;
 
         public Linux(Clipboard clipboard) {
@@ -118,7 +116,7 @@ public interface OS {
     class Default extends Wrap {
 
         public Default() {
-            this(new Clipboard());
+            this(new SysClipboard());
         }
 
         public Default(Clipboard clipboard) {
@@ -131,6 +129,7 @@ public interface OS {
         public Fork(Clipboard clipboard) {
             this(System.getProperty("os.name"), clipboard);
         }
+
         public Fork(String name, Clipboard clipboard) {
             super(Fork.os(name.toLowerCase(), clipboard));
         }
@@ -144,12 +143,20 @@ public interface OS {
                 return new Linux(clipboard);
             }
             throw new IllegalStateException(
-                String.format("Unsupported os name %s", name));
+                    String.format("Unsupported os name %s", name));
         }
     }
 
-    interface Hotkeys extends com.copypaste.javafx.Hotkeys {
+    interface Hotkeys extends Iterable<Hotkeys.Hotkey> {
         Hotkey paste();
+
+        interface Hotkey {
+            String path();
+
+            String combination();
+
+            void trigger();
+        }
 
         class Wrap implements Hotkeys {
 
@@ -189,7 +196,7 @@ public interface OS {
                     @Override
                     public String combination() {
                         throw new UnsupportedOperationException(
-                            "#combination()");
+                                "#combination()");
                     }
 
                     @Override
@@ -210,7 +217,6 @@ public interface OS {
 
         class Windows implements Hotkeys {
 
-            private static final Logger LOG = LogManager.getLogger(Windows.class);
             private final Robot robot;
 
             public Windows() {
@@ -228,7 +234,7 @@ public interface OS {
                     @Override
                     public String combination() {
                         throw new UnsupportedOperationException(
-                            "#combination()");
+                                "#combination()");
                     }
 
                     @Override
@@ -250,11 +256,9 @@ public interface OS {
                 try {
                     return new Robot();
                 } catch (AWTException e) {
-                    LOG.error("Can't initialize Robot", e);
                     throw new IllegalStateException(e);
                 }
             }
         }
     }
-
 }
