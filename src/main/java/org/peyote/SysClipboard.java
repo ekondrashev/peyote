@@ -6,8 +6,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.util.Duration;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Optional;
 
 public class SysClipboard implements org.peyote.Clipboard<String> {
@@ -16,11 +15,12 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
 
     private Clipboard clipboard;
     private ClipboardContent content;
-    private List<Timeline> timelines = new LinkedList<>();
+    private Monitor monitor;
 
     public SysClipboard() {
-        clipboard = Clipboard.getSystemClipboard();
-        content = new ClipboardContent();
+        this.clipboard = Clipboard.getSystemClipboard();
+        this.content = new ClipboardContent();
+        this.monitor = new Monitor(this);
     }
 
     @Override
@@ -38,37 +38,49 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
     }
 
     @Override
-    public void disable() {
-        for (Timeline timeline : timelines) {
+    public org.peyote.Clipboard.Monitor<String> change() {
+        return monitor;
+    }
+
+    class Monitor implements org.peyote.Clipboard.Monitor<String> {
+
+        private final SysClipboard clipboard;
+        private Timeline timeline;
+
+        public Monitor(SysClipboard clipboard) {
+            this.clipboard = clipboard;
+        }
+
+        @Override
+        public void monitor(Callback<String> callback) {
+            final String[] oldString = {""};
+            timeline = new Timeline(
+                    new KeyFrame(
+                            Duration.millis(DELAY),
+                            event -> {
+                                if (updated(oldString)) {
+                                    callback.updated(oldString[0]);
+                                }
+                            }
+                    ));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        }
+
+        @Override
+        public void close() throws IOException {
             timeline.stop();
         }
-    }
 
-    @Override
-    public void monitor(Callback<String> callback) {
-        final String[] oldString = { "" };
-        Timeline timeline = new Timeline(
-                new KeyFrame(
-                        Duration.millis(DELAY),
-                        event -> {
-                            if (updated(oldString)) {
-                                callback.updated(oldString[0]);
-                            }
-                        }
-                ));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-        timelines.add(timeline);
-    }
-
-    private boolean updated(String[] buf) {
-        Optional<String> current = this.value();
-        if (current.isPresent() && !current.get().equals(buf[0])) {
-            String newString = current.get();
-            buf[0] = newString;
-            return true;
+        private boolean updated(String[] buf) {
+            Optional<String> current = this.clipboard.value();
+            if (current.isPresent() && !current.get().equals(buf[0])) {
+                String newString = current.get();
+                buf[0] = newString;
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
 }

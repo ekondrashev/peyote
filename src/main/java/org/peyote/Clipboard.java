@@ -1,16 +1,25 @@
 package org.peyote;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Optional;
 
 public interface Clipboard<E> {
 
     Optional<E> value(E... data);
 
-    void disable();
+    Monitor<E> change();
 
-    void monitor(Callback<E> callback);
+    interface Monitor<E> extends Closeable {
 
-    interface Callback<E> {
-        void updated(E data);
+        void monitor(Callback<E> callback);
+
+        @Override
+        void close() throws IOException;
+
+        interface Callback<E> {
+            void updated(E data);
+        }
     }
+
 }
