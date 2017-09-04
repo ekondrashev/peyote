@@ -38,7 +38,7 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
         return new Monitor(this, callback);
     }
 
-    class Monitor implements org.peyote.Clipboard.Monitor<String> {
+    class Monitor implements org.peyote.Clipboard.Monitor {
 
         private static final int DELAY = 200;
 
