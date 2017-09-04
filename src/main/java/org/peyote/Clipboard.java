@@ -8,18 +8,16 @@ public interface Clipboard<E> {
 
     Optional<E> value(E... data);
 
-    Monitor<E> change();
+    Monitor<E> monitor(Callback<E> callback);
 
     interface Monitor<E> extends Closeable {
-
-        void monitor(Callback<E> callback);
+        Monitor<E> monitor(Callback<E> callback);
 
         @Override
         void close() throws IOException;
-
-        interface Callback<E> {
-            void updated(E data);
-        }
     }
 
+    interface Callback<E> {
+        void updated(E data);
+    }
 }

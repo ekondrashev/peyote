@@ -11,16 +11,12 @@ import java.util.Optional;
 
 public class SysClipboard implements org.peyote.Clipboard<String> {
 
-    private static final int DELAY = 200;
-
     private Clipboard clipboard;
     private ClipboardContent content;
-    private Monitor monitor;
 
     public SysClipboard() {
         this.clipboard = Clipboard.getSystemClipboard();
         this.content = new ClipboardContent();
-        this.monitor = new Monitor(this);
     }
 
     @Override
@@ -38,21 +34,23 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
     }
 
     @Override
-    public org.peyote.Clipboard.Monitor<String> change() {
-        return monitor;
+    public Monitor monitor(Callback<String> callback) {
+        return new Monitor(this).monitor(callback);
     }
 
     class Monitor implements org.peyote.Clipboard.Monitor<String> {
 
+        private static final int DELAY = 200;
+
         private final SysClipboard clipboard;
         private Timeline timeline;
 
-        public Monitor(SysClipboard clipboard) {
+        Monitor(SysClipboard clipboard) {
             this.clipboard = clipboard;
         }
 
         @Override
-        public void monitor(Callback<String> callback) {
+        public Monitor monitor(Callback<String> callback) {
             final String[] oldString = {""};
             timeline = new Timeline(
                     new KeyFrame(
@@ -65,6 +63,8 @@ public class SysClipboard implements org.peyote.Clipboard<String> {
                     ));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
+
+            return this;
         }
 
         @Override
