@@ -22,7 +22,7 @@
     <scm>
         <url>https://github.com/ekondrashev/peyote</url>
         <connection>scm:git:https://github.com/ekondrashev/peyote</connection>
-        <developerConnection>scm:git:https://github.com/ekondrashev/peyote.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/settings/profile</developerConnection>
     </scm>
 
     <developers>
