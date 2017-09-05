@@ -10,7 +10,7 @@
     <name>peyote</name>
 
     <dependencies>
-	<exclude.tests/>
+	<!--<exclude.tests/>-->
     </dependencies>
 
     <properties>
@@ -23,7 +23,7 @@
                 <version>2.20</version>
                 <configuration>
                     <excludes>
-                        <exclude>${exclude.tests}</exclude>
+                        <!--<exclude>${exclude.tests}</exclude>-->
                     </excludes>
                 </configuration>
             </plugin>
