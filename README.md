@@ -5,9 +5,9 @@ Peyote is a library to provide fork for os. This will allow you to change some f
 Add dependency to your `pom.xml`
 ```xml
 <dependency>
-    <groupId>org.peyote</groupId>
+    <groupId>com.github.ekondrashev.peyote</groupId>
     <artifactId>peyote</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 ## Requirements
