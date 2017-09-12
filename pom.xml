@@ -4,7 +4,7 @@
 
     <groupId>com.github.ekondrashev.peyote</groupId>
     <artifactId>peyote</artifactId>
-    <version>1.3</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>peyote</name>
