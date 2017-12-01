@@ -7,7 +7,7 @@ Add dependency to your `pom.xml`
 <dependency>
     <groupId>com.github.ekondrashev.peyote</groupId>
     <artifactId>peyote</artifactId>
-    <version>1.1</version>
+    <version>{LAST_VERSION}</version>
 </dependency>
 ```
 ## Requirements
